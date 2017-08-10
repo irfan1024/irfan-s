@@ -1,0 +1,161 @@
+```
+var log = console.log.bind(console)
+var e = (selector) => document.querySelector(selector)
+var appendHtml = (element, html) => element.insertAdjacentHTML('beforeend', html)
+var ajax = (method, path, data, callback) => {
+    var r = new XMLHttpRequest()
+    r.open(method, path, true)
+    r.setRequestHeader('content-Type', 'application/json')
+    r.onreadystatechange = () => {
+        if (r.readyState == 4) {
+            callback(r.response)
+        }
+    }
+    r.send(data)
+}
+// 其实和todo的应用差不多, 只不过往服务器传数据会比较麻烦一些。
+// 1. 加载服务器的数据, 然后显示在页面上
+// 2. 当点击添加按钮的时候, api 如果成功,则在页面中显示被创建的 todo, 显示在页面上, 然后往服务器发送数据
+// 3. 点击删除按钮的时候, 一个是在页面上删除, 另一个在服务器端删除
+// 4. 点击编辑按钮的时候, 焦点在文字上, 当按 enter 时, 要确定并返回给服务器数据
+// 5. 数据更新后, 更新页面内容
+// 6. 添加 CSS 样式
+var insertCss = () => {
+    var container = e("#id-div-todo-container")
+    var t = `
+        <style>
+            #id-div-todo-container {
+                width: 500px;
+                background: lightblue;
+                outline: 1px solid black;
+            }
+            .todoCell {
+                border-bottom: 2px solid red;
+                width: 450px;
+                margin: 0 auto;
+            }
+            .main {
+                diaplay: inline-block;
+                text-align: center;
+                margin: 10px auto;
+            }
+        </style>
+    `
+    var head = e("head")
+    appendHtml(head, t)
+}
+var inserHtml = (container, task, id) => {
+    var t = `
+        <div class="todoCell" data-id="${id}">
+            <button class="todo-buttonEdit">编辑</button>
+            <button class="todo-buttonDelete">删除</button>
+            <span class="todoTask">${task}</span>
+        </div>
+    `
+    appendHtml(container, t)
+}
+
+// 1. 加载服务器的数据, 然后显示在页面上
+var loadTodos = () => {
+    ajax('GET', 'https://vip.cocode.cc/sandbox/todo/1802367081/all', "", (n) => {
+        var a = JSON.parse(n)
+        for (var i = 0; i < a.length; i++) {
+            var task = a[i].task
+            var id = a[i].id
+            var container = e("#id-div-todo-container")
+            inserHtml(container, task, id)
+        }
+    })
+}
+var firstIntoHtml = () => {
+    var container = e("#id-div-todo-container")
+    var html = `
+        <div class="main">
+            <input id="id-input"></input>
+            <button id="id-addButton" class="todo-addButton">add</button>
+        </div>
+    `
+    appendHtml(container, html)
+    loadTodos()
+}
+// 2. 当点击添加按钮的时候, api 如果成功,则在页面中显示被创建的 todo, 显示在页面上, 然后往服务器发送数据
+var addButton = () => {
+    var container = e("#id-div-todo-container")
+    container.addEventListener("click", (event) => {
+        var target = event.target
+        if (target.classList.contains("todo-addButton")) {
+            var task = e("#id-input").value
+            data = {
+                'task': task,
+            }
+            data = JSON.stringify(data)
+            ajax("POST", "https://vip.cocode.cc/sandbox/todo/1802367081/add", data, (n) => {
+                var a = JSON.parse(n)
+                var id = a.id
+                inserHtml(container, task, id)
+            })
+        }
+    })
+}
+// 3. 点击删除按钮的时候, 一个是在页面上删除, 另一个在服务器端删除
+var deleteButton = () => {
+    var container = e("#id-div-todo-container")
+    container.addEventListener("click", (event) => {
+        var target = event.target
+        if (target.classList.contains("todo-buttonDelete")) {
+            target.parentElement.remove()
+            var id = target.parentElement.dataset.id
+            url = "https://vip.cocode.cc/sandbox/todo/1802367081/delete/" + id
+            ajax("GET", url, "", (n) => {
+                log("删除成功")
+            })
+        }
+
+    })
+}
+// 4. 点击编辑按钮的时候, 焦点在文字上, 当按 enter 时, 要确定并返回给服务器数据
+var editButton = () => {
+    var container = e("#id-div-todo-container")
+    container.addEventListener("click", (event) => {
+        var target = event.target
+        if (target.classList.contains('todo-buttonEdit')) {
+            var a = target.parentElement.querySelector("span")
+            a.contentEditable = true
+            a.focus()
+        }
+    })
+}
+var enter = () => {
+    var container = e("#id-div-todo-container")
+    container.addEventListener("keydown", (event) => {
+        var target = event.target
+        if (target.classList.contains("todoTask")) {
+            if (event.key == "Enter") {
+                event.preventDefault()
+                target.contentEditable = false
+                var id = target.parentElement.dataset.id
+                var url = "https://vip.cocode.cc/sandbox/todo/1802367081/update/" + id
+                var data = {
+                    "task": target.innerHTML
+                }
+                data = JSON.stringify(data)
+                ajax("POST", url, data, (n) => {
+                    log("更新")
+                })
+
+            }
+        }
+    })
+}
+
+var _main = () => {
+    firstIntoHtml()
+    addButton()
+    deleteButton()
+    editButton()
+    enter()
+    insertCss()
+}
+_main()
+
+```
