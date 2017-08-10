@@ -1,0 +1,269 @@
+```
+<!DOCTYPE html>
+<html>
+<head>
+	<title>player</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<style type="text/css">
+		.viewport {
+			width: 414px;
+			height: 736px;
+			background: #06D;
+			position: relative;
+		}
+		.button-stlye {
+			width: 40px;
+			height: 40px;
+			background: lightblue;
+		}
+		.button-fun {
+			position: absolute;
+			bottom: 90px;
+			left: 50px;
+			background: lightgreen;
+		}
+		.button-play {
+			position: absolute;
+			bottom: 90px;
+			left: 150px;
+		}
+		.button-pause {
+			position: absolute;
+			bottom: 90px;
+			right: 150px;
+		}
+		.button-playerList {
+			position: absolute;
+			bottom: 90px;
+			right: 50px;
+			background: black;
+			color: white;
+		}
+		.audio-style {
+			position: absolute;
+		    bottom: 235px;
+		    left: 57px;
+		}
+		.currentTime-style {
+			display: inline-block;
+			width: 40px;
+			height: 20px;
+			background: white;
+			position: absolute;
+			bottom: 200px;
+			left: 50px;
+		}
+		.duration-style {
+			display: inline-block;
+			width: 40px;
+			height: 20px;
+			position: absolute;
+			bottom: 200px;
+			right: 50px;
+			background: white;
+		}
+		#playerList-main {
+			width: 414px;
+			height: 450px;
+			background: #fff;
+			opacity: 0.7;
+		}
+		#id-funList {
+			height: 120px;
+			width: 40px;
+			position: absolute;
+			bottom: 130px;
+			left: 50px;
+		}
+		.class-funList-style {
+			height: 40px;
+			width: 40px;
+			border-bottom: 1px solid black;
+			text-align: center;
+		}
+		.mp3-style {
+		    width: 350px;
+		    padding: 5px 15px;
+		    border-bottom: 1px solid black;
+		}
+		.hide {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="id-content" class="viewport">
+		<!-- 时间 -->
+		<span id="id-currentTime" class="currentTime-style"></span>
+		<span id="id-duration" class="duration-style">asd</span>
+		<!-- 播放器 -->
+		<audio id="id-audio" class="audio-style" controls="controls" src="1.mp3">
+		</audio>
+		<!-- 播放、暂停、列表按钮 -->
+		<button id="id-play" class="button-stlye button-play">></button>
+		<button id="id-pause" class="button-stlye button-pause">||</button>
+		<button id="id-playerList" class="button-stlye button-playerList">LIST</button>
+		<button id="id-fun" class="button-stlye button-fun">···</button>
+		<!-- 播放列表 -->
+		<div id="playerList-main" class="hide">
+			<div id="id-mp3-1" class="mp3-style" data-path="1.mp3">anthology</div>
+			<div id="id-mp3-2" class="mp3-style" data-path="2.mp3">pink moon</div>
+			<div id="id-mp3-3" class="mp3-style" data-path="3.mp3">我小时候是嬉皮</div>
+		</div>
+		<!-- 功能列表 -->
+		<div id="id-funList" class="funList-style hide button-stlye">
+			<div id="id-circle" class="class-funList-style" data-func="1">O</div>
+			<div id="id-order" class="class-funList-style" data-func="2">-</div>
+			<div id="id-random" class="class-funList-style" data-func="3">*</div>
+		</div>
+	</div>
+	<script src="gua.js"></script>
+	<script>
+		// 函数集合~
+        var musicList = ["1.mp3", "2.mp3", "3.mp3"]
+        var nextSong = function(index) {
+            index = (index + 1) % musicList.length
+            return musicList[index]
+        }
+        var totalTime = function() {
+        	var duration = e("#id-duration")
+        	var a = audio.duration
+			var mintue = Math.floor(a / 60)
+			var second = Math.floor(a % 60)
+			if (mintue < 10) {
+				mintue = "0" + String(mintue)
+			} else {
+				String(mintue)
+			}
+			if (second < 10) {
+				second = "0" + String(second)
+			} else {
+				String(second)
+			}
+			duration.innerHTML = `${mintue}:${second}`
+        }
+        var currentTimeFun = function() {
+        	setInterval(function(event) {
+        		var currentTime = e("#id-currentTime")
+				var a = audio.currentTime
+				var mintue = Math.floor(a / 60)
+				var second = Math.floor(a % 60)
+				if (mintue < 10) {
+					mintue = "0" + String(mintue)
+				} else {
+					String(mintue)
+				}
+				if (second < 10) {
+					second = "0" + String(second)
+				} else {
+					String(second)
+				}
+				currentTime.innerHTML = `${mintue}:${second}`
+			}, 1000)
+        }
+        // 单曲循环的函数
+        var djxphr = function() {
+        	audio.src = audio.src
+			audio.play()
+        }
+        // 顺序播放的函数
+        var xpxubofh = function() {
+        	for (var i = 0; i < musicList.length; i++) {
+                log("audio.src", audio.src, typeof audio.src)
+                if (audio.src.includes(musicList[i])) {
+                    var a = (i + 1) % musicList.length
+                    audio.src = musicList[a]
+                    log("audio.src", audio.src)
+                    audio.play()
+                    break
+                }
+            }
+        }
+        // 随机播放的函数
+        var svjibofh = function() {
+        	var a = Math.floor(Math.random() * 3)
+            log("a", a)
+            var song = musicList[a]
+            log("song", song)
+            audio.src = song
+            audio.play()
+        }
+		// 绑定播放、暂停按钮
+		var buttonPlay = e(".button-play")
+		var audio = e("#id-audio")
+		// 播放
+		buttonPlay.addEventListener("click", function(event) {
+			audio.play()
+		})
+		// 暂停
+		var buttonPause = e(".button-pause")
+		buttonPause.addEventListener("click", function(event) {
+			audio.pause()
+			clearInterval(setInterval(function(event) {
+			currentTime.innerHTML = audio.currentTime
+		}, 1000))
+		})
+		// 时间的显示
+		audio.addEventListener("canplay", function(event) {
+			totalTime()
+			currentTimeFun()
+		})
+		// 歌曲列表的显示和隐藏
+		bindAll("#id-playerList", "click", function(event) {
+			var target = event.target
+			var a = e("#playerList-main")
+			a.classList.toggle("hide")
+		})
+		// 功能列表的显示和隐藏
+		bindAll("#id-fun", "click", function(event) {
+			var a = e("#id-funList")
+			a.classList.toggle("hide")
+			bindAll(".class-funList-style", "click", function(event) {
+				var target = event.target.parentElement
+				target.classList.add("hide")
+			})
+		})
+		// 歌曲切换
+		bindAll(".mp3-style", "click", function(event) {
+			var target = event.target
+			audio.src = target.dataset.path
+			audio.play()
+		})
+		// 单曲循环、顺序列表、随机播放的按钮
+		// 单曲循环按钮绑定
+		var numb 
+		bindAll("#id-circle", "click", function(event) {
+			var target = event.target
+			numb = target.dataset.func
+		})
+		// 顺序播放按钮绑定
+		bindAll("#id-order", "click", function(event) {
+			var target = event.target
+			numb = target.dataset.func
+		})
+		// 随机播放按钮绑定
+		bindAll("#id-random", "click", function(event) {
+			var target = event.target
+			numb = target.dataset.func
+		})
+  		audio.addEventListener("ended", function(event) {
+  			if (numb == "1") {
+  				// 单曲循环
+  				log("1")
+				djxphr()
+  			} else if (numb == "2") {
+  				// 顺序播放
+  				log("2")
+				xpxubofh()
+  			} else if (numb == "3") {
+  				// 随机播放
+  				log("3")
+				svjibofh()
+  			}
+  		})
+	</script>
+</body>
+</html>
+
+```
