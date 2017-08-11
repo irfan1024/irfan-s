@@ -1,0 +1,102 @@
+```
+var fs = require('fs')
+var log = console.log.bind(console)
+var request = require('sync-request')
+var cheerio = require('cheerio')
+class Movies {
+	constructor() {
+		this.name = ""
+		this.score = 0
+		this.ranking = 0
+		this.coverUrl = ""
+		this.quote = ""
+	}
+}
+var saveMovie = (a) => {
+	var s = JSON.stringify(a, null, 2)
+	var path = 'shiguangwang.txt'
+	var fs = require("fs")
+	fs.writeFileSync(path, s)
+}
+var cachedUrl = (url) => {
+	if (url.includes("index")) {
+        var fileName = "html/" + url.split("index-")[1]
+	} else {
+		var fileName = "html/" + "first.html"
+	}
+
+	var exists = fs.existsSync(fileName)
+	if (exists) {
+		var data = fs.readFileSync(fileName)
+		return data
+	} else {
+		var r = request('GET', url)
+		// 返回的html是不能进行操作的,要经过cheerio.load进行操作,下面会有
+		// 数据是从服务器去得的，算是服务器的HTML，所以需要用cherrio来变成浏览器能用的dom，算是浏览器HTML吧
+		var a = r.getBody('utf-8')
+		// utf-8是文本编码的
+		// 返回的信息和http协议有关,返回的信息上面是包含头部header的,那部分不需要,只需要返回的body部分
+		fs.writeFileSync(fileName, a)
+		return a
+	}
+}
+var movieFromDiv = (div) => {
+	var e = cheerio.load(div)
+	var movie = new Movies()
+	var a = e("h2")
+	movie.name = a.find("a").text().split("&nbsp")[0]
+	movie.score = e(".total", "b").text() + e(".total2", "b").text()
+	movie.ranking = e("em", ".number").text()
+	movie.coverUrl = e(".img_box").attr('src')
+	movie.quote = e(".mt3").text()
+	return movie
+}
+
+var movieFromUrl = (url) => {
+	var body = cachedUrl(url)
+	var e = cheerio.load(body)
+
+	var a = e("li", "#asyncRatingRegion")
+
+	var movie = []
+	for (var i = 0; i < a.length; i++) {
+        var div = a[i]
+        var m = movieFromDiv(div)
+        movie.push(m)
+	}
+
+	return movie
+}
+
+var allMovies = () => {
+	var url = 'http://www.mtime.com/top/movie/top100/'
+	var movies = []
+	for (var i = 1; i < 11; i++) {
+		if (i !== 1) {
+            url = 'http://www.mtime.com/top/movie/top100/'
+			url = `${url}index-${i}.html`
+		}
+		var movieInPage = movieFromUrl(url)
+		movies = [...movies, ...movieInPage]
+	}
+	return movies
+}
+var downloadCovers = (movies) => {
+    for (var i = 0; i < movies.length; i++) {
+        var url = movies[i].coverUrl
+		log("url", url)
+        var path = "pic/" + `${i}.jpg`
+        var r = request("GET", url)
+        var img = r.getBody()
+        fs.writeFileSync(path, img)
+    }
+}
+
+var _main = () => {
+	var all = allMovies()
+	saveMovie(all)
+    downloadCovers(all)
+}
+
+_main()
+```
