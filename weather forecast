@@ -22,6 +22,7 @@
                 r.send(data)
             }
             var dataYo = []
+            var dataLo = []
             var getData = function() {
                 var url = 'https://free-api.heweather.com/v5/forecast?city=邯郸&key=fe7b7651459e42f18f468620c5fea721'
                 ajax('GET', url, '', function(r) {
@@ -31,55 +32,92 @@
                     for (var i = 0; i < a.length; i++) {
                         var b = a[i]
                         dataYo[i] = Number(b['tmp']['max'])
+                        dataLo[i] = Number(b['tmp']['min'])
                     }
                     console.log("dataYo", dataYo)
                     var myChart = echarts.init(document.querySelector("#main"))
                     var option = {
-                        title: {
-                            text: '未来三天气温变化',
-                            subtext: '纯属虚构'
-                        },
-                        tooltip: {
-                            trigger: 'axis'
-                        },
-                        legend: {
-                            data:['天气']
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                dataZoom: {
-                                    yAxisIndex: 'none'
-                                },
-                                dataView: {readOnly: false},
-                                magicType: {type: ['line', 'bar']},
-                                restore: {},
-                                saveAsImage: {}
+                    title: {
+                        text: '未来一周气温变化',
+                        subtext: '纯属虚构'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:['最高气温','最低气温']
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            dataZoom: {
+                                yAxisIndex: 'none'
+                            },
+                            dataView: {readOnly: false},
+                            magicType: {type: ['line', 'bar']},
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis:  {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['明天','后天','大后天']
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value} °C'
+                        }
+                    },
+                    series: [
+                        {
+                            name:'最高气温',
+                            type:'line',
+                            data:dataYo,
+                            markPoint: {
+                                data: [
+                                    {type: 'max', name: '最大值'},
+                                    {type: 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
                             }
                         },
-                        xAxis:  {
-                            type: 'category',
-                            boundaryGap: false,
-                            data: ['明天','后天','大后天']
-                        },
-                        yAxis: {
-                            type: 'value',
-                            axisLabel: {
-                                formatter: '{value} °C'
+                        {
+                            name:'最低气温',
+                            type:'line',
+                            data:dataLo,
+                            markPoint: {
+                                data: [
+                                    {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'},
+                                    [{
+                                        symbol: 'none',
+                                        x: '90%',
+                                        yAxis: 'max'
+                                    }, {
+                                        symbol: 'circle',
+                                        label: {
+                                            normal: {
+                                                position: 'start',
+                                                formatter: '最大值'
+                                            }
+                                        },
+                                        type: 'max',
+                                        name: '最高点'
+                                    }]
+                                ]
                             }
-                        },
-                        series: [
-                            {
-                                name:'天气',
-                                type:'line',
-                                data: dataYo,
-                                markLine: {
-                                    data: [
-                                        {type: 'average', name: '平均值'}
-                                    ]
-                                }
-                            }
-                        ]
+                        }
+                    ]
                     };
                     myChart.setOption(option)
                 })
@@ -90,4 +128,3 @@
 </html>
 
 ```
-
