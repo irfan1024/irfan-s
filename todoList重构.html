@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>todoLisrApp</title>
+        <style media="screen">
+            .t {
+                color: red;
+                text-decoration: line-through;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="contain">
+            <div class="func">
+                <input type="text" name="name" value="">
+                <button class="addButton" type="button" name="button">增加</button>
+            </div>
+            <div class="content"></div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        var e = (selector) => document.querySelector(selector)
+        var log = console.log.bind(console)
+        var es = (selector) => document.querySelectorAll(selector)
+        var template = (value) => {
+            var t = `
+                <div class="fazer">
+                    <button class="complete">完成</button>
+                    <button class="delete">删除</button>
+                    <span class="text">${value}</span>
+                </div>
+            `
+            var a = e(".func")
+            a.insertAdjacentHTML("beforeend", t)
+        }
+
+        // 加载todolist
+        var loadTodos = function() {
+            if (localStorage.save == undefined) {
+                return []
+            }
+            var s = localStorage.save
+            var arr = JSON.parse(s)
+            for (var i = 0; i < arr.length; i++) {
+                var o = arr[i]
+                template(o)
+            }
+            return arr
+        }
+        // 把之前的todolist给了todos
+        var Todos = loadTodos()
+        // 增加按钮的功能
+        var addButton = () => {
+            var addButton = e(".addButton")
+            addButton.addEventListener("click", (event) => {
+                var value = e("input").value
+                template(value)
+                Todos.push(value)
+                var a = JSON.stringify(Todos)
+                localStorage.save = a
+            })
+        }
+        // 完成和删除按钮的功能
+        var complete = () => {
+            var con = e(".contain")
+            con.addEventListener("click", (event) => {
+                var target = event.target
+
+                // 完成
+                if (target.classList.contains("complete")) {
+                    var fazer = target.closest(".fazer")
+                    fazer.classList.toggle("t")
+                } else if (target.classList.contains("delete")) {
+                    deleteList(target)
+                }
+            })
+        }
+        // 删除
+        var deleteList = (element) => {
+            var fazer = element.closest(".fazer")
+            fazer.remove()
+            del(element)
+        }
+        // 从数组和local中删除
+        var del = function(element) {
+            var fazer = element.closest(".fazer")
+            var value = fazer.querySelector("span")
+            log("value", value.innerHTML)
+            for (var i = 0; i < Todos.length; i++) {
+                var a = Todos[i]
+                var b = String(value.innerHTML)
+                if (a == b) {
+                    Todos.splice(i, 1)
+                    log("Todos", Todos)
+                }
+            }
+            localStorage.save = JSON.stringify(Todos)
+        }
+        var __main = () => {
+            addButton()
+            complete()
+        }
+        __main()
+    </script>
+</html>
