@@ -11,7 +11,7 @@
 }
 nav {
     height: 50px;
-    background: rgba(0, 0, 0, 0.3)
+    background: rgba(0, 0, 0, 0.3);
 }
 #banner {
     height: 700px;
@@ -26,7 +26,6 @@ nav ul li , nav .logo{
     display: inline-block;
     line-height: 50px;
     margin-right: 20px;
-
 }
 nav ul li a {
     display: inline-block;
