@@ -5,6 +5,7 @@
         <script src="build/react.js"></script>
         <script src="build/react-dom.js"></script>
         <script src="build/browser.min.js"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
         <title>08</title>
     </head>
     <body>
@@ -23,7 +24,7 @@
                 $.get(this.props.source, (result) => {
                     console.log("result", result)
                     var lastGist = result[0]
-                    if (this.isMounted()) {
+                    if (true) {
                         this.setState({
                             username: lastGist.owner.login,
                             lastGistUrl: lastGist.html_url,
@@ -34,7 +35,7 @@
             render() {
                 return (
                     <div>
-                        {this.state.username}'s last gist is
+                        {this.state.username} last gist is
                         <a href={this.state.lastGistUrl}>here</a>.
                     </div>
                 )
