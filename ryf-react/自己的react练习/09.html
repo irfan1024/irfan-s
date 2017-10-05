@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="build/react.js"></script>
+        <script src="build/react-dom.js"></script>
+        <script src="build/browser.min.js"></script>
+        <title>08</title>
+    </head>
+    <body>
+        <div id="example"></div>
+        <script type="text/babel">
+        class Input extends React.Component {
+            constructor(props) {
+                super(props)
+                this.handleChange = this.handleChange.bind(this)
+                this.state = {
+                    value: 'hello!'
+                }
+            }
+            handleChange(event) {
+                this.setState({
+                    value: event.target.value
+                })
+            }
+            render() {
+                var value = this.state.value
+                return (
+                    <div>
+                        <input type="text" value={value} onChange={this.handleChange}/>
+                        <p>{value}</p>
+                    </div>
+                )
+            }
+        }
+            ReactDOM.render(
+                <Input />,
+                document.getElementById("example")
+            )
+        </script>
+    </body>
+</html>

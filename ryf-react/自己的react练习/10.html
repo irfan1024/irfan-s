@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="build/react.js"></script>
+        <script src="build/react-dom.js"></script>
+        <script src="build/browser.min.js"></script>
+        <title>08</title>
+    </head>
+    <body>
+        <div id="example"></div>
+        <script type="text/babel">
+        class Hello extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    opacity: 1.0,
+                }
+            }
+            componentDidMount() {
+                this.timer = setInterval(
+                    function() {
+                        var opacity = this.state.opacity
+                        opacity -= 0.05
+                        if (opacity < 0.1) {
+                            opacity = 1.0
+                        }
+                        this.setState({
+                            opacity: opacity
+                        })
+                    }.bind(this), 100
+                )
+            }
+            render() {
+                return (
+                    // 在这里 style 可以是一个 const divStyle = {color: 'blue',backgroundImage: 'url(' + imgUrl + ')',};
+                    //                         function HelloWorldComponent() {
+                    //                             return <div style={divStyle}>Hello World!</div>;
+                    //                         }
+                    //                         这样的模式, 在这里下面的也可以替换成一个对象变量.
+                    <div style={{opacity: this.state.opacity}}>
+                        hello! {this.props.name}
+                    </div>
+                )
+            }
+        }
+            ReactDOM.render(
+                <Hello name='world' />,
+                document.getElementById("example")
+            )
+        </script>
+    </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="build/react.js"></script>
+        <script src="build/react-dom.js"></script>
+        <script src="build/browser.min.js"></script>
+        <title>08</title>
+    </head>
+    <body>
+        <div id="example"></div>
+        <script type="text/babel">
+        // 使用了 jQuery 中的 ajax 封装
+        class UserGist extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    username: '',
+                    lastGistUrl: '',
+                }
+            }
+            componentDidMount() {
+                $.get(this.props.source, (result) => {
+                    console.log("result", result)
+                    var lastGist = result[0]
+                    if (this.isMounted()) {
+                        this.setState({
+                            username: lastGist.owner.login,
+                            lastGistUrl: lastGist.html_url,
+                        })
+                    }
+                }.bind(this))
+            }
+            render() {
+                return (
+                    <div>
+                        {this.state.username}'s last gist is
+                        <a href={this.state.lastGistUrl}>here</a>.
+                    </div>
+                )
+            }
+        }
+            ReactDOM.render(
+                <UserGist source="https://api.github.com/users/octocat/gists" />,
+                document.getElementById("example")
+            )
+        </script>
+    </body>
+</html>
