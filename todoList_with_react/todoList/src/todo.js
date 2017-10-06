@@ -28,6 +28,7 @@ class TodoApp extends React.Component {
         <h2>TODO</h2>
         <TodoList todos={this.state.items} />
         <div>
+        // 其实这里的 value={this.state.text} 是为了点击了 button 之后, 可以将 input 清空, value 变为 text 的 " "
           <input onChange={this.handleChange} value={this.state.text} placeholder="输入事项" />
           <button onClick={this.handleSubmit}>{buttonTitle}</button>
         </div>
@@ -39,6 +40,7 @@ class TodoApp extends React.Component {
   // 相当于给 input 绑定了 change 事件
   // 你可以 log 一下来查看
   handleChange(e) {
+      console.log("里面的value",e.target.value,this.state.text)
     var state = {
       text: e.target.value
     }

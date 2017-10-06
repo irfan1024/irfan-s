@@ -6,6 +6,7 @@ import Message from './message'
 import Timer from './timer'
 import TodoApp from './todo'
 import MarkdownEditor from './editor'
+import Cyf from './button'
 
 
 // 程序的主入口
@@ -35,6 +36,7 @@ class App extends Component {
         <button onClick={this.handleToggleTimer}>开关 timer </button>
         {timer}
         <TodoApp />
+        <Cyf bbb="哈哈哈,快点我,快点我,这是我自己做的插件~~" />
         <MarkdownEditor />
       </div>
     )
