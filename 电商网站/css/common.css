@@ -1,0 +1,82 @@
+* {
+    box-sizing: border-box;
+    outline: 0;
+
+    transition: background 200ms, transform 500ms;
+}
+
+body {
+    background: #f9f9f9;
+}
+
+.container {
+    max-width: 1080px;
+    display: block;
+    margin: 0 auto;
+}
+
+img {
+    display: block;
+    width: 100%;
+}
+
+a {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.cf::after,
+.cf::before {
+    content: "";
+    display: block;
+    clear: both;
+}
+.col-1,
+.col-2,
+.col-3,
+.col-4,
+.col-5,
+.col-6,
+.col-7,
+.col-8,
+.col-9 {
+    float: left;
+    display: block;
+    /*这里设置了浮动还设置 relative 的原因有两个: (1)给子元素定位做参考用的.
+    (2) z-index,仅对position:relative|absolute|fixed;有效*/
+    position: relative;
+    min-height: 1px;
+}
+.col-1 {
+    width: 10%;
+}
+.col-2 {
+    width: 20%;
+}
+.col-3 {
+    width: 30%;
+}
+.col-4 {
+    width: 40%;
+}
+.col-5 {
+    width: 50%;
+}
+.col-6 {
+    width: 60%;
+}
+.col-7 {
+    width: 70%;
+}
+.col-8 {
+    width: 80%;
+}
+.col-9 {
+    width: 90%;
+}
